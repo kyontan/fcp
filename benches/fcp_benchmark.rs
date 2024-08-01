@@ -27,7 +27,7 @@ fn fcp_benchmark(mut group: BenchmarkGroup<WallTime>, fixture_file: &str) {
                 || {
                     remove(&dest_path);
                     let mut command = Command::new("cp");
-                    command.args(&["-R", source, dest]);
+                    command.args(["-R", source, dest]);
                     command
                 },
                 run_command,
@@ -42,7 +42,7 @@ fn fcp_benchmark(mut group: BenchmarkGroup<WallTime>, fixture_file: &str) {
                 || {
                     remove(&dest_path);
                     let mut command = Command::new(executable_path);
-                    command.args(&[source, dest]);
+                    command.args([source, dest]);
                     command
                 },
                 run_command,
