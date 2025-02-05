@@ -133,27 +133,13 @@ jobs:
           "${{ matrix.strip }}" \
           "/$BIN"
 
-    - name: Determine archive name
+    - name: Upload release
       shell: bash
       run: |
         version="${{ needs.create-release.outputs.version }}"
-        echo "ARCHIVE=fcp-$version-${{ matrix.target }}" >> $GITHUB_ENV
+        BIN_RENAMED="fcp-$version-${{ matrix.target }}"
+        mv "$BIN" "$BIN_RENAMED"
 
-    - name: Creating directory for archive
-      shell: bash
-      run: |
-        cp "$BIN" "$ARCHIVE"/
-
-    - name: Build archive
-      shell: bash
-      run: |
-        tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
-        echo "ASSET=$ARCHIVE.tar.gz" >> $GITHUB_ENV
-
-    - name: Upload release archive
+        gh release upload "$version" "$BIN_RENAMED"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      shell: bash
-      run: |
-        version="${{ needs.create-release.outputs.version }}"
-        gh release upload "$version" ${{ env.ASSET }}
