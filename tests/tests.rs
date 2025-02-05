@@ -33,7 +33,7 @@ const DIR_MODE: u32 = 0o755;
 fn diff(filename: &str) -> ExitStatus {
     let filename = filename.strip_suffix(".json").unwrap();
     Command::new("diff")
-        .args(&[
+        .args([
             "-rq",
             "--no-dereference",
             HYDRATED_DIR.join(filename).to_str().unwrap(),
@@ -126,7 +126,7 @@ fn character_device() {
     remove(&destination);
     let contents = "Hello world\r";
     let result = Command::new("tests/character_device.exp")
-        .args(&[
+        .args([
             fcp_executable_path().to_str().unwrap(),
             destination.to_str().unwrap(),
             contents,
@@ -178,7 +178,7 @@ fn partial_directory() {
     assert!(result.stderr.contains("partial_directory/two.txt"));
     for file in ["one.txt", "three.txt"] {
         let result = Command::new("diff")
-            .args(&[
+            .args([
                 "-q",
                 HYDRATED_DIR
                     .join("partial_directory")
@@ -225,7 +225,7 @@ fn copy_into_symlink() {
     assert!(result.success);
     assert_eq!(result.stderr, "");
     let result = Command::new("diff")
-        .args(&[
+        .args([
             "-rq",
             source.to_str().unwrap(),
             destination
@@ -302,7 +302,7 @@ fn copy_many_into_permissions_error() {
     assert!(result.stderr.contains("two.txt"));
     for file in ["one.txt", "three.txt"] {
         let result = Command::new("diff")
-            .args(&[
+            .args([
                 "-q",
                 HYDRATED_DIR.join(fixture_name).join(file).to_str().unwrap(),
                 COPIES_DIR.join(fixture_name).join(file).to_str().unwrap(),
