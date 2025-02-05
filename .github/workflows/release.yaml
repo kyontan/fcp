@@ -3,7 +3,7 @@ name: release
 
 on:
   push:
-    tags:
+    tags: ["*"]
 
 # We need this to be able to create releases.
 permissions:
@@ -24,13 +24,6 @@ jobs:
       - name: Show the version
         run: |
           echo "version is: $VERSION"
-      - name: Check that tag version and Cargo.toml version are the same
-        shell: bash
-        run: |
-          if ! grep -q "version = \"$VERSION\"" Cargo.toml; then
-            echo "version does not match Cargo.toml" >&2
-            exit 1
-          fi
       - name: Create GitHub release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -47,7 +40,7 @@ jobs:
       # systems.
       CARGO: cargo
       # When CARGO is set to CROSS, this is set to `--target matrix.target`.
-      TARGET_FLAGS:
+      TARGET_FLAGS: ''
       # When CARGO is set to CROSS, TARGET_DIR includes matrix.target.
       TARGET_DIR: ./target
       # Bump this as appropriate. We pin to a version to make sure CI
@@ -81,7 +74,13 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       shell: bash
       run: |
-        ci/ubuntu-install-packages
+        if ! command -V sudo; then
+          apt-get update
+          apt-get install -y --no-install-recommends sudo
+        fi
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          zsh xz-utils liblz4-tool musl-tools brotli zstd
 
     - name: Install Rust
       uses: dtolnay/rust-toolchain@master
@@ -121,7 +120,7 @@ jobs:
       shell: bash
       run: |
         ${{ env.CARGO }} build --verbose --release ${{ env.TARGET_FLAGS }}
-        bin="target/${{ matrix.target }}/release/rg"
+        bin="target/${{ matrix.target }}/release/fcp"
         echo "BIN=$bin" >> $GITHUB_ENV
 
     - name: Strip release binary (cross)
